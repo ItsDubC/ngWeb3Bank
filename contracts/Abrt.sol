@@ -1,9 +1,9 @@
 pragma solidity ^0.8.0;
 
-contract Usdc {
-    string public _name = 'Mock USDC';
-    string public _symbol = 'mUSDC';
-    uint256 public _totalSupply = 1000000000000000000000000000; // 1 billion tokens
+contract Abrt {
+    string public _name = 'AirBank Reward Token';
+    string public _symbol = 'ABRT';
+    uint256 public _totalSupply = 2000000000000000000000000; // 2 million tokens
     
     mapping(address => uint256) public _balanceOf;
     mapping(address => mapping(address => uint256)) public _allowance;
@@ -40,7 +40,7 @@ contract Usdc {
 
         _balanceOf[from] -= value;
         _balanceOf[to] += value;
-        _allowance[from][msg.sender] -= value;
+        _allowance[msg.sender][from] -= value;
 
         emit Transfer(from, to, value);
         return true;
