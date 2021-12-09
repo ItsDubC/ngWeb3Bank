@@ -51,7 +51,14 @@ contract AirBank {
     function issueAbrtTokenRewards() public {
         require(msg.sender == _owner, 'Only AirBank can issue ABRT reward tokens');
 
-        // Reward 5% staked amount
-         
+        // Reward 5% staked mUSDC amount in ABRT
+         for (uint256 i = 0; i < _stakers.length; i++) {
+             address recipient = _stakers[i];
+
+             if (_stakedBalance[recipient] > 0) {
+                 uint256 abrtReward = _stakedBalance[recipient] * 1.05; // transfer(address to, uint256 value) public returns (bool success) {
+                 _abrt.transfer(recipient, abrtReward);
+             }
+         }
     }
 }
