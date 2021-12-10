@@ -9,3 +9,6 @@ npm-debug.log
 
 # truffle build directory
 build/
+
+# ABIs
+truffle_abis/*
