@@ -1,0 +1,28 @@
+{
+  "name": "ngweb3bank",
+  "version": "0.0.1",
+  "description": "Angular Web3 Staking App",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItsDubC/ngWeb3Bank.git"
+  },
+  "author": "ItsDubC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ItsDubC/ngWeb3Bank/issues"
+  },
+  "homepage": "https://github.com/ItsDubC/ngWeb3Bank#readme",
+  "dependencies": {
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-bignumber": "^3.0.0",
+    "truffle": "^5.4.23",
+    "web3": "^1.6.1"
+  }
+}
