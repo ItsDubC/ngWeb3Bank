@@ -12,9 +12,9 @@ contract AirBank {
 
     address[] public _stakers;
 
-    mapping(address => uint256) _stakedBalance;
-    mapping(address => bool) _hasStaked;
-    mapping(address => bool) _isCurrentlyStaked;
+    mapping(address => uint256) public _stakedBalance;
+    mapping(address => bool) public _hasStaked;
+    mapping(address => bool) public _isCurrentlyStaked;
 
     constructor(Usdc usdc, Abrt abrt) {
         _usdc = usdc;
