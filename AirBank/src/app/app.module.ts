@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 import { StakeComponent } from './components/stake/stake.component';
 
@@ -22,6 +23,7 @@ import { StakeComponent } from './components/stake/stake.component';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]
