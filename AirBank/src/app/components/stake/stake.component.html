@@ -1,4 +1,19 @@
-<mat-card>
-    <mat-card-title>Stake Tokens</mat-card-title>
-    <mat-card-subtitle align="end">End</mat-card-subtitle>
-</mat-card>
+<div class="container">
+    <mat-card>
+        <mat-card-title>Stake Tokens</mat-card-title>
+        <mat-card-subtitle align="end">Balance: </mat-card-subtitle>
+        <mat-card-content>
+            <div class="row">
+                <mat-form-field>
+                    <mat-label>Amount (mUSDC)</mat-label>
+                    <input matInput name="stakeAmt"  autocomplete="doNotAutoComplete" type="number">
+                    <mat-icon matSuffix>paid</mat-icon>
+                </mat-form-field>
+                <span><button mat-flat-button color="accent">Deposit</button></span>
+            </div>
+            <div class="row">
+                <span><button mat-flat-button color="warn" class="withdraw-button">Withdraw</button></span>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

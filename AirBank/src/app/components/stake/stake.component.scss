@@ -1,0 +1,20 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 25vw;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.row > * {
+    padding: 10px;
+    flex-grow: 1;
+}
+
+.withdraw-button {
+    width: 100%;
+}
