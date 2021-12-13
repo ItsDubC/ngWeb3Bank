@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.accountId = 'testAcctId';
+    this.accountId = this.web3ContractService.accountId;
   }
 
 }
