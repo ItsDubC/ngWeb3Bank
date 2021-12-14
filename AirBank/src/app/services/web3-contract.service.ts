@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import Web3 from 'web3';
-//import { Abrt } from '../../../../truffle_abis/Abrt';
 const Usdc = require('../../../../truffle_abis/Usdc.json');
 const Abrt = require('../../../../truffle_abis/Abrt.json');
 

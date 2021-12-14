@@ -1,20 +1,23 @@
-.container {
+mat-card {
     display: flex;
     flex-direction: column;
-    width: 25vw;
 }
 
-.row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+.container-form {
+    display: grid;
+    grid-template-areas:    "a a b"
+                            "c c c";
+    gap: 10px;
 }
 
-.row > * {
-    padding: 10px;
-    flex-grow: 1;
+.amount {
+    grid-area: a;
 }
 
-.withdraw-button {
-    width: 100%;
+.deposit {
+    grid-area: b;
+}
+
+.withdraw {
+    grid-area: c;
 }
