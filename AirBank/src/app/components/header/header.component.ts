@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { from } from 'rxjs';
 import { Web3ContractService } from 'src/app/services/web3-contract.service';
 
 @Component({
@@ -23,10 +24,13 @@ export class HeaderComponent implements OnInit {
     //   alert("Still loading MetaMask integration.");
     // }
     //alert('Is web3 Enabled?' + this.web3ContractService.isWeb3Enabled())
-
-    this.web3ContractService.isWeb3Enabled().subscribe(result => {
-      alert('web3 enabled:' + result);
+    from(this.web3ContractService.getAccountId()).subscribe(result => {
+      this.accountId = result;
     })
+
+    // this.web3ContractService.isWeb3Enabled().subscribe(result => {
+    //   alert('web3 enabled:' + result);
+    // })
   }
 
 }
