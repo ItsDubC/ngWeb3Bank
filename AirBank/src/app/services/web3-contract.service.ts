@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import Web3 from 'web3';
+
 const Usdc = require('../../../../truffle_abis/Usdc.json');
 const Abrt = require('../../../../truffle_abis/Abrt.json');
+const AirBank = require('../../../../truffle_abis/AirBank.json');
 
 declare const window: any;
 
@@ -53,30 +55,70 @@ export class Web3ContractService {
     return Promise.resolve(isWeb3Enabled);
   }
 
-  public async getAccountId(): Promise<any> {
+  // public async getAccountId(): Promise<any> {
+  //   if (this.accountId == '') {
+  //     const web3 = window.web3;
+  //     this.accounts = await web3.eth.getAccounts();
+  //     this.accountId = this.accounts[0];
+  //   }
+
+  //   return Promise.resolve(this.accountId);
+  // }
+
+  public getAccountId(): Observable<string> {
+    let accounts$: Observable<any>;
+    
     if (this.accountId == '') {
-      const web3 = window.web3;
-      this.accounts = await web3.eth.getAccounts();
-      this.accountId = this.accounts[0];
+      accounts$ = from(window.web3.eth.getAccounts());
+
+      accounts$.subscribe((result) => {
+        this.accounts = result as string[];
+        this.accountId = this.accounts[0];
+      });
+    }
+    else {
+      accounts$ = of(this.accountId);
     }
 
-    return Promise.resolve(this.accountId);
+    return accounts$;
   }
 
-  public async getUsdcContract(): Promise<any> {
+  public getUsdcContract(): Observable<any> {
+    let net$: Observable<any>;
+
     if (this.usdcContract == null) {
       const web3 = window.web3;
-      const networkId = await web3.eth.net.getId();
+      net$ = from(web3.eth.net.getId());
 
-      const usdcData = Usdc.networks[networkId];
+      net$.subscribe((result) => {
+        const usdcData = Usdc.networks[result];
 
-      if (usdcData) {
-        this.usdcContract = new web3.eth.Contract(Usdc.abi, usdcData.address);
-      }
-      
-      return Promise.resolve(this.usdcContract);
+        if (usdcData) {
+          this.usdcContract = new web3.eth.Contract(Usdc.abi, usdcData.address);
+        }
+      })
     }
+    else {
+      net$ = of(this.usdcContract);
+    }
+
+    return net$;
   }
+
+  // public async getUsdcContract(): Promise<any> {
+  //   if (this.usdcContract == null) {
+  //     const web3 = window.web3;
+  //     const networkId = await web3.eth.net.getId();
+
+  //     const usdcData = Usdc.networks[networkId];
+
+  //     if (usdcData) {
+  //       this.usdcContract = new web3.eth.Contract(Usdc.abi, usdcData.address);
+  //     }
+  //   }
+
+  //   return Promise.resolve(this.usdcContract);
+  // }
 
   public async getAbrtContract(): Promise<any> {
     if (this.abrtContract == null) {
@@ -88,12 +130,25 @@ export class Web3ContractService {
       if (abrtData) {
         this.abrtContract = new web3.eth.Contract(Usdc.abi, abrtData.address);
       }
-      
-      return Promise.resolve(this.abrtContract);
     }
+
+    return Promise.resolve(this.abrtContract);
   }
 
-  //public 
+  public async getAirBankContract(): Promise<any> {
+    if (this.airBankContract == null) {
+      const web3 = window.web3;
+      const networkId = await web3.eth.net.getId();
+
+      const abData = AirBank.networks[networkId];
+
+      if (abData) {
+        this.airBankContract = new web3.eth.Contract(AirBank.abi, abData.address);
+      }
+    }
+
+    return Promise.resolve(this.airBankContract);
+  }
 
 
 

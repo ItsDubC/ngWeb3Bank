@@ -15,22 +15,8 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.accountId = this.web3ContractService.accountId;
-
-    // if (this.web3ContractService.hasInitialized) {
-    //   this.accountId = this.web3ContractService.accountId;
-    // }
-    // else {
-    //   alert("Still loading MetaMask integration.");
-    // }
-    //alert('Is web3 Enabled?' + this.web3ContractService.isWeb3Enabled())
     from(this.web3ContractService.getAccountId()).subscribe(result => {
       this.accountId = result;
     })
-
-    // this.web3ContractService.isWeb3Enabled().subscribe(result => {
-    //   alert('web3 enabled:' + result);
-    // })
   }
-
 }
