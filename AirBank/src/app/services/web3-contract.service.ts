@@ -19,7 +19,6 @@ export class Web3ContractService {
   airBankContract: any = null;
 
   private isWeb3EnabledPromise: Promise<boolean>;
-  //private isBlockChainDataLoaded: Promise<boolean>;
 
   constructor() {
     this.isWeb3EnabledPromise = this.loadWeb3().then((result) => {
@@ -55,16 +54,6 @@ export class Web3ContractService {
     return Promise.resolve(isWeb3Enabled);
   }
 
-  // public async getAccountId(): Promise<any> {
-  //   if (this.accountId == '') {
-  //     const web3 = window.web3;
-  //     this.accounts = await web3.eth.getAccounts();
-  //     this.accountId = this.accounts[0];
-  //   }
-
-  //   return Promise.resolve(this.accountId);
-  // }
-
   public getAccountId(): Observable<string> {
     let accounts$: Observable<any>;
     
@@ -84,13 +73,13 @@ export class Web3ContractService {
   }
 
   public getUsdcContract(): Observable<any> {
-    let net$: Observable<any>;
+    let usdc$: Observable<any>;
 
     if (this.usdcContract == null) {
       const web3 = window.web3;
-      net$ = from(web3.eth.net.getId());
+      usdc$ = from(web3.eth.net.getId());
 
-      net$.subscribe((result) => {
+      usdc$.subscribe((result) => {
         const usdcData = Usdc.networks[result];
 
         if (usdcData) {
@@ -99,146 +88,81 @@ export class Web3ContractService {
       })
     }
     else {
-      net$ = of(this.usdcContract);
+      usdc$ = of(this.usdcContract);
     }
 
-    return net$;
+    return usdc$;
   }
 
-  // public async getUsdcContract(): Promise<any> {
-  //   if (this.usdcContract == null) {
-  //     const web3 = window.web3;
-  //     const networkId = await web3.eth.net.getId();
+  public getAbrtContract(): Observable<any> {
+    let abrt$: Observable<any>;
 
-  //     const usdcData = Usdc.networks[networkId];
-
-  //     if (usdcData) {
-  //       this.usdcContract = new web3.eth.Contract(Usdc.abi, usdcData.address);
-  //     }
-  //   }
-
-  //   return Promise.resolve(this.usdcContract);
-  // }
-
-  public async getAbrtContract(): Promise<any> {
     if (this.abrtContract == null) {
       const web3 = window.web3;
-      const networkId = await web3.eth.net.getId();
+      abrt$ = from(web3.eth.net.getId());
 
-      const abrtData = Abrt.networks[networkId];
+      abrt$.subscribe((result) => {
+        const abrtData = Abrt.networks[result];
 
-      if (abrtData) {
-        this.abrtContract = new web3.eth.Contract(Usdc.abi, abrtData.address);
-      }
+        if (abrtData) {
+          this.abrtContract = new web3.eth.Contract(Abrt.abi, abrtData.address);
+        }
+      })
+    }
+    else {
+      abrt$ = of(this.abrtContract);
     }
 
-    return Promise.resolve(this.abrtContract);
+    return abrt$;
   }
 
-  public async getAirBankContract(): Promise<any> {
+  public getAirBankContract(): Observable<any> {
+    let airBank$: Observable<any>;
+
     if (this.airBankContract == null) {
       const web3 = window.web3;
-      const networkId = await web3.eth.net.getId();
+      airBank$ = from(web3.eth.net.getId());
 
-      const abData = AirBank.networks[networkId];
+      airBank$.subscribe((result) => {
+        const airBankData = AirBank.networks[result];
 
-      if (abData) {
-        this.airBankContract = new web3.eth.Contract(AirBank.abi, abData.address);
-      }
+        if (airBankData) {
+          this.airBankContract = new web3.eth.Contract(AirBank.abi, airBankData.address);
+        }
+      })
+    }
+    else {
+      airBank$ = of(this.abrtContract);
     }
 
-    return Promise.resolve(this.airBankContract);
+    return airBank$;
   }
 
+  public stakeTokens(amount: number) {
+    const approve$ = new Observable();
 
 
 
 
 
-  // //window: any;
-  // // private web3: any;
-  // // private enable: any;
-  //  accounts: string[] = [];
-  //  accountId: string = '';
-  // hasInitialized = false;
 
+    
+    this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
+      this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
+            console.log('stakeTokens transaction hash:' + hash);
+        });
+    });
+  }
 
-  // theAccountId: Observable<string> = new Observable();
+  public unstakeTokens() {
+    this.airBankContract.methods.unstakeTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
+      console.log('unstakeTokens transaction hash:' + hash);
+    })
+  }
 
-
-
-  // constructor() { 
-  //   // this.loadWeb3();
-  //   // this.loadBlockChainData();
-  //   //this.accountId = this.accounts[0];
-  //   this.init().then((result) => {
-  //     this.hasInitialized = result;
-  //   });
-  // }
-
-  // public async init(): Promise<any> {
-  //   // this.loadWeb3();
-  //   // this.loadBlockChainData();
-  //   // this.hasInitialized = true;
-
-  //   // this.loadWeb3().then(this.loadBlockChainData().then({
-
-  //   // }));
-
-  //   let hasInitialized = false;
-
-  //   const p1 = this.loadWeb3()
-  //     .then((result) => {
-  //       return this.loadBlockChainData();
-  //     })
-  //     .then((result) => {
-  //       hasInitialized = true;
-  //       console.log('hasInitialized', this.hasInitialized);
-  //     })
-  //     .catch((result) => {
-  //       console.error("Unable to load web3 contracts");
-  //     });
-
-  //     return Promise.resolve(hasInitialized);
-  // }
-
-
-
-  // private async loadBlockChainData(): Promise<any> {
-  //   const web3 = window.web3;
-  //   this.accounts = await web3.eth.getAccounts();
-  //   console.log(this.accounts, 'accounts');
-
-  //   this.accountId = this.accounts[0];
-
-  //   //this.theAccountId = 
-
-  //   return Promise.resolve(true);
-  // }
-
-  // public getUserAccountId() {
-  //   return Observable.
-  // }
+  public issueRewards() {
+    this.airBankContract.methods.issueTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
+      console.log('issueRewards transaction hash: ' + hash);
+    })
+  }
 }
-
-
-// @Injectable()
-// export class Api {
-//   private userPromise: Promise<User>;
-
-//   constructor(private http: Http) {
-//     this.userPromise = LocalStorage.get('user').then(json => {
-//       if (json !== "") {
-//         return JSON.parse(json);
-//       }
-//       return null;
-//     });        
-//   }
-
-//   public getSomethingFromServer() {
-//       return Observable.fromPromise(this.userPromise).flatMap((user) => {
-//         return this.http.get(...).map(...);
-//       });
-//     }
-//   }
-// }
