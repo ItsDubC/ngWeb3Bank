@@ -1,7 +1,7 @@
 //import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import Web3 from 'web3';
 
 const Usdc = require('../../../../truffle_abis/Usdc.json');
@@ -57,21 +57,22 @@ export class Web3ContractService {
   }
 
   public getAccountId(): Observable<string> {
-    let accounts$: Observable<any>;
+    let accountId$: Observable<any>;
     
     if (this.accountId == '') {
-      accounts$ = from(window.web3.eth.getAccounts());
-
-      accounts$.subscribe((result) => {
-        this.accounts = result as string[];
-        this.accountId = this.accounts[0];
-      });
+      accountId$ = from(window.web3.eth.getAccounts()).pipe(
+        mergeMap((accounts) => {
+          this.accounts = accounts as string[];
+          this.accountId = this.accounts[0];
+          return of(this.accountId);
+        })
+      );
     }
     else {
-      accounts$ = of(this.accountId);
+      accountId$ = of(this.accountId);
     }
 
-    return accounts$;
+    return accountId$;
   }
 
   public getUsdcContract(): Observable<any> {
@@ -140,21 +141,60 @@ export class Web3ContractService {
   public getUsdcTotalSupply(): Observable<any> {
     return this.getUsdcContract().pipe(
       mergeMap((usdc: any) => {
-        return from(usdc.methods._totalSupply().call());
+        return from(usdc.methods._totalSupply().call()).pipe(
+          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+        );
       })
     );
   }
 
+  public getUsdcBalance(accountId: string): Observable<number> {
+    return this.getUsdcContract().pipe(
+      mergeMap((usdc: any) => {
+        return from(usdc.methods._balanceOf(accountId).call()).pipe(
+          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+        )
+      })
+    )
+    //let tetherBalance = await tether.methods.balanceOf(this.state.acctNumber).call();
+  }
+
   public stakeTokens(amount: number): Observable<any> {
-    let approve$ = new Observable();
+    const getUsdc$ = this.getUsdcContract();
 
-    approve$ = from(this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
-      this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
-            console.log('stakeTokens transaction hash:' + hash);
-        });
-    }))
+    getUsdc$.subscribe(usdc => {
+      const approve$ = from(usdc.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}));
 
-    return approve$;
+      approve$.subscribe(() => {
+        return from(usdc.methods.depositTokens(amount).send({from: this.accountId}))
+      });
+    });
+
+    return getUsdc$;
+    
+    // return this.getUsdcContract().pipe(
+    //   mergeMap((usdc: any) => {
+    //     from(usdc.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}))
+    //   }),
+    //   mergeMap((usdc: any) => {
+    //     return from(usdc.methods.depositTokens(amount).send({from: this.accountId}))
+    //   })
+    // )
+
+
+
+
+
+
+    // let approve$ = new Observable();
+
+    // approve$ = from(this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
+    //   this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
+    //         console.log('stakeTokens transaction hash:' + hash);
+    //     });
+    // }))
+
+    // return approve$;
 
 
 
