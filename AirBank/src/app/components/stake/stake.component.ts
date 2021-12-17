@@ -19,7 +19,7 @@ export class StakeComponent implements OnInit {
     accountId$.subscribe((accountId: string) => {
       this.web3ContractService.getUsdcBalance(accountId).subscribe(balance => {
         this.usdcBalance = balance;
-      })
+      });
     })
   }
 }

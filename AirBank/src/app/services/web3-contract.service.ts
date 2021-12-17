@@ -156,7 +156,26 @@ export class Web3ContractService {
         )
       })
     )
-    //let tetherBalance = await tether.methods.balanceOf(this.state.acctNumber).call();
+  }
+
+  public getRewardBalance(accountId: string): Observable<number> {
+    return this.getAbrtContract().pipe(
+      mergeMap((abrt: any) => {
+        return from(abrt.methods._balanceOf(accountId).call()).pipe(
+          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+        )
+      })
+    )
+  }
+
+  public getStakedBalance(accountId: string): Observable<number> {
+    return this.getAirBankContract().pipe(
+      mergeMap((airBank: any) => {
+        return from(airBank.methods._stakedBalance(accountId).call()).pipe(
+          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+        )
+      })
+    )
   }
 
   public stakeTokens(amount: number): Observable<any> {
