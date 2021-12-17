@@ -1,5 +1,7 @@
+//import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import Web3 from 'web3';
 
 const Usdc = require('../../../../truffle_abis/Usdc.json');
@@ -77,15 +79,14 @@ export class Web3ContractService {
 
     if (this.usdcContract == null) {
       const web3 = window.web3;
-      usdc$ = from(web3.eth.net.getId());
 
-      usdc$.subscribe((result) => {
-        const usdcData = Usdc.networks[result];
-
-        if (usdcData) {
+      usdc$ = from(web3.eth.net.getId()).pipe(
+        mergeMap((port: any) => {
+          const usdcData = Usdc.networks[port];
           this.usdcContract = new web3.eth.Contract(Usdc.abi, usdcData.address);
-        }
-      })
+          return of(this.usdcContract) 
+        })
+      )
     }
     else {
       usdc$ = of(this.usdcContract);
@@ -99,15 +100,14 @@ export class Web3ContractService {
 
     if (this.abrtContract == null) {
       const web3 = window.web3;
-      abrt$ = from(web3.eth.net.getId());
 
-      abrt$.subscribe((result) => {
-        const abrtData = Abrt.networks[result];
-
-        if (abrtData) {
+      abrt$ = from(web3.eth.net.getId()).pipe(
+        mergeMap((port: any) => {
+          const abrtData = Abrt.networks[port];
           this.abrtContract = new web3.eth.Contract(Abrt.abi, abrtData.address);
-        }
-      })
+          return of(this.abrtContract) 
+        })
+      )
     }
     else {
       abrt$ = of(this.abrtContract);
@@ -121,37 +121,48 @@ export class Web3ContractService {
 
     if (this.airBankContract == null) {
       const web3 = window.web3;
-      airBank$ = from(web3.eth.net.getId());
 
-      airBank$.subscribe((result) => {
-        const airBankData = AirBank.networks[result];
-
-        if (airBankData) {
+      airBank$ = from(web3.eth.net.getId()).pipe(
+        mergeMap((port: any) => {
+          const airBankData = AirBank.networks[port];
           this.airBankContract = new web3.eth.Contract(AirBank.abi, airBankData.address);
-        }
-      })
+          return of(this.airBankContract) 
+        })
+      )
     }
     else {
-      airBank$ = of(this.abrtContract);
+      airBank$ = of(this.airBankContract);
     }
 
     return airBank$;
   }
 
-  public stakeTokens(amount: number) {
-    const approve$ = new Observable();
+  public getUsdcTotalSupply(): Observable<any> {
+    return this.getUsdcContract().pipe(
+      mergeMap((usdc: any) => {
+        return from(usdc.methods._totalSupply().call());
+      })
+    );
+  }
 
+  public stakeTokens(amount: number): Observable<any> {
+    let approve$ = new Observable();
 
-
-
-
-
-    
-    this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
+    approve$ = from(this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
       this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
             console.log('stakeTokens transaction hash:' + hash);
         });
-    });
+    }))
+
+    return approve$;
+
+
+
+    // this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
+    //   this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
+    //         console.log('stakeTokens transaction hash:' + hash);
+    //     });
+    // });
   }
 
   public unstakeTokens() {
@@ -166,3 +177,7 @@ export class Web3ContractService {
     })
   }
 }
+
+// function mergeMap(arg0: (usdc: any) => Observable<unknown>): import("rxjs").OperatorFunction<any, any> {
+//   throw new Error('Function not implemented.');
+// }

@@ -103,6 +103,10 @@ contract('AirBank', ([owner, customer]) => {
             // _isCurrentlyStaked update
             result = await airBank._isCurrentlyStaked(customer);
             assert.equal(result, false, 'customer _isCurrentlyStaked status after unstaking');
+
+            // USDC total supply
+            let totalSupply = await usdc._totalSupply();
+            console.log('totalSupply: ' + totalSupply);
         });
     });
 

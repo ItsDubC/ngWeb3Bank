@@ -18,5 +18,9 @@ export class HeaderComponent implements OnInit {
     from(this.web3ContractService.getAccountId()).subscribe(result => {
       this.accountId = result;
     })
+
+    this.web3ContractService.getUsdcTotalSupply().subscribe(result => {
+      alert(result + ' mUSDC');
+    })
   }
 }
