@@ -1,6 +1,11 @@
-mat-card {
+.container {
     display: flex;
     flex-direction: column;
+}
+
+mat-card {
+    width: 30vw;
+    min-width: 450px;
 }
 
 .container-form {

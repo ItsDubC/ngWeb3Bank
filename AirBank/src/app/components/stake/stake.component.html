@@ -1,14 +1,16 @@
-<mat-card>
-    <mat-card-title>Stake Tokens</mat-card-title>
-    <mat-card-subtitle align="end">Balance: {{usdcBalance}} mUSDC</mat-card-subtitle>
-    <mat-card-content class="container-form">
-        <mat-form-field class="amount">
-            <mat-label>Amount (mUSDC)</mat-label>
-            <input matInput name="stakeAmt"  autocomplete="doNotAutoComplete" type="number">
-            <mat-icon matSuffix>paid</mat-icon>
-        </mat-form-field>
-        <span class="deposit"><button mat-flat-button color="primary">Deposit</button></span>
-        <button mat-flat-button color="warn" class="withdraw">Withdraw</button>
-    </mat-card-content>
-</mat-card>
+<div class="container">
+    <mat-card>
+        <mat-card-title>Stake Tokens</mat-card-title>
+        <mat-card-subtitle align="end">Current Balance: {{usdcBalance}} mUSDC</mat-card-subtitle>
+        <mat-card-content class="container-form">
+            <mat-form-field class="amount">
+                <mat-label>Amount to Stake (mUSDC)</mat-label>
+                <input matInput name="stakeAmt"  autocomplete="doNotAutoComplete" type="number" [(ngModel)]="stakeAmount">
+                <mat-icon matSuffix>paid</mat-icon>
+            </mat-form-field>
+            <span class="deposit"><button mat-flat-button color="primary" (click)="stake()">Stake</button></span>
+            <button mat-flat-button color="warn" class="withdraw">Withdraw</button>
+        </mat-card-content>
+    </mat-card>
+</div>
 

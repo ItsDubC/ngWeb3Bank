@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule} from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
 
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 import { StakeComponent } from './components/stake/stake.component';
@@ -32,7 +34,9 @@ import { StakeComponent } from './components/stake/stake.component';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatSnackBarModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,6 @@
 //import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from, of, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import Web3 from 'web3';
 
@@ -24,6 +24,9 @@ export class Web3ContractService {
 
   constructor() {
     this.isWeb3EnabledPromise = this.loadWeb3().then((result) => {
+      this.getUsdcContract().subscribe();
+      this.getAbrtContract().subscribe();
+      this.getAirBankContract().subscribe();
       return result;
     });
   }
@@ -179,49 +182,16 @@ export class Web3ContractService {
   }
 
   public stakeTokens(amount: number): Observable<any> {
-    const getUsdc$ = this.getUsdcContract();
+    const convertedAmount = window.web3.utils.toWei(amount.toString(), 'Ether');
 
-    getUsdc$.subscribe(usdc => {
-      const approve$ = from(usdc.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}));
-
-      approve$.subscribe(() => {
-        return from(usdc.methods.depositTokens(amount).send({from: this.accountId}))
-      });
-    });
-
-    return getUsdc$;
-    
-    // return this.getUsdcContract().pipe(
-    //   mergeMap((usdc: any) => {
-    //     from(usdc.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}))
-    //   }),
-    //   mergeMap((usdc: any) => {
-    //     return from(usdc.methods.depositTokens(amount).send({from: this.accountId}))
-    //   })
-    // )
-
-
-
-
-
-
-    // let approve$ = new Observable();
-
-    // approve$ = from(this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
-    //   this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
-    //         console.log('stakeTokens transaction hash:' + hash);
-    //     });
-    // }))
-
-    // return approve$;
-
-
-
-    // this.usdcContract.methods.approve(this.airBankContract._address, amount).send({from: this.accountId}).on('transactionHash', () => {
-    //   this.airBankContract.methods.depositTokens(amount).send({from: this.accountId}).on('transactionHash', (hash: any) => {
-    //         console.log('stakeTokens transaction hash:' + hash);
-    //     });
-    // });
+    return forkJoin([this.getUsdcContract(),this.getAirBankContract()]).pipe(
+      mergeMap((usdc: any) => {
+        return from(this.usdcContract.methods.approve(this.airBankContract._address, convertedAmount).send({from: this.accountId}))
+      }),
+      mergeMap((usdc: any) => {
+        return from(this.airBankContract.methods.stakeUsdcTokens(convertedAmount).send({from: this.accountId}))
+      })
+    );
   }
 
   public unstakeTokens() {
@@ -236,7 +206,3 @@ export class Web3ContractService {
     })
   }
 }
-
-// function mergeMap(arg0: (usdc: any) => Observable<unknown>): import("rxjs").OperatorFunction<any, any> {
-//   throw new Error('Function not implemented.');
-// }
