@@ -25,6 +25,13 @@ export class BalanceSummaryComponent implements OnInit {
       this.web3ContractService.getRewardBalance(accountId).subscribe(balance => {
         this.rewardBalance = balance;
       });
-    })
+    });
+
+    this.subscribeToBalanceChanges();
+  }
+
+  subscribeToBalanceChanges() {
+    this.web3ContractService.StakedBalance$.subscribe(result => this.stakedBalance = result);
+    this.web3ContractService.RewardBalance$.subscribe(result => this.rewardBalance = result);
   }
 }

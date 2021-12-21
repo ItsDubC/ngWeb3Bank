@@ -6,7 +6,7 @@ import { Web3ContractService } from 'src/app/services/web3-contract.service';
   selector: 'app-stake',
   templateUrl: './stake.component.html',
   styleUrls: ['./stake.component.scss'],
-  providers: [Web3ContractService]
+  // providers: [Web3ContractService]
 })
 export class StakeComponent implements OnInit {
   usdcBalance: number = 0;
@@ -19,6 +19,7 @@ export class StakeComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+    this.subscribeToBalanceChanges();
   }
 
   load() {
@@ -44,15 +45,14 @@ export class StakeComponent implements OnInit {
       this.snackBar.open(`Staked ${this.stakeAmount} mUSDC`, "SUCCESS", {
         duration: 3000
       });
-      this.load();
+      //this.load();
       this.stakeAmount = 0;
+      this.web3ContractService.loadBalances();
     })
+  }
 
-    // this.web3ContractService.getAccountId().subscribe(id => {
-    //   this.snackBar.open(`Staked ${this.stakeAmount} mUSDC to ${id}`, "SUCCESS", {
-    //     duration: 3
-    //   });
-    // });
+  subscribeToBalanceChanges() {
+    this.web3ContractService.UsdcBalance$.subscribe(result => this.usdcBalance = result);
   }
 }
 

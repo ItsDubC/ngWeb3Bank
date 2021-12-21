@@ -1,6 +1,6 @@
 //import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import { Observable, from, of, forkJoin } from 'rxjs';
+import { Observable, from, of, forkJoin, BehaviorSubject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import Web3 from 'web3';
 
@@ -21,6 +21,36 @@ export class Web3ContractService {
   airBankContract: any = null;
 
   private isWeb3EnabledPromise: Promise<boolean>;
+
+  private _stakedBalance$: BehaviorSubject<number> = new BehaviorSubject(0);
+  private _rewardBalance$: BehaviorSubject<number> = new BehaviorSubject(0);
+  private _usdcBalance$: BehaviorSubject<number> = new BehaviorSubject(0);
+
+  public get StakedBalance$(): Observable<number> {
+    return this._stakedBalance$.asObservable();
+  }
+
+  public get RewardBalance$(): Observable<number> {
+    return this._rewardBalance$.asObservable();
+  }
+
+  public get UsdcBalance$(): Observable<number> {
+    return this._usdcBalance$.asObservable();
+  }
+
+  public loadBalances() {
+    this.getStakedBalance(this.accountId).subscribe(result => {
+      this._stakedBalance$.next(+result);
+    });
+
+    this.getRewardBalance(this.accountId).subscribe(result => {
+      this._rewardBalance$.next(+result);
+    });
+
+    this.getUsdcBalance(this.accountId).subscribe(result => {
+      this._usdcBalance$.next(+result);
+    });
+  }
 
   constructor() {
     this.isWeb3EnabledPromise = this.loadWeb3().then((result) => {
