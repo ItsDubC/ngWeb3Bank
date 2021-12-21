@@ -14,16 +14,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule} from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
+import { CountdownModule } from 'ngx-countdown';
 
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 import { StakeComponent } from './components/stake/stake.component';
+import { AirdropComponent } from './components/airdrop/airdrop.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     BalanceSummaryComponent,
-    StakeComponent
+    StakeComponent,
+    AirdropComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,8 @@ import { StakeComponent } from './components/stake/stake.component';
     MatButtonModule,
     MatDividerModule,
     MatSnackBarModule,
-    FormsModule
+    FormsModule,
+    CountdownModule
   ],
   providers: [],
   bootstrap: [AppComponent]

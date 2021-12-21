@@ -1,0 +1,9 @@
+mat-card > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+mat-card-subtitle {
+    padding-top: 10px;
+}

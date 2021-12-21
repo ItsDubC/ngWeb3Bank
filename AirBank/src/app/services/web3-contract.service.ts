@@ -185,7 +185,11 @@ export class Web3ContractService {
     return this.getUsdcContract().pipe(
       mergeMap((usdc: any) => {
         return from(usdc.methods._balanceOf(accountId).call()).pipe(
-          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+          map(balance => {
+            const newBalance = window.web3.utils.fromWei(balance, 'Ether');
+            this._usdcBalance$.next(+newBalance);
+            return newBalance;
+          })
         )
       })
     )
@@ -195,7 +199,11 @@ export class Web3ContractService {
     return this.getAbrtContract().pipe(
       mergeMap((abrt: any) => {
         return from(abrt.methods._balanceOf(accountId).call()).pipe(
-          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+          map(balance =>  {
+            const newBalance = window.web3.utils.fromWei(balance, 'Ether');
+            this._rewardBalance$.next(+newBalance);
+            return newBalance;
+          })
         )
       })
     )
@@ -205,7 +213,11 @@ export class Web3ContractService {
     return this.getAirBankContract().pipe(
       mergeMap((airBank: any) => {
         return from(airBank.methods._stakedBalance(accountId).call()).pipe(
-          map(balance => window.web3.utils.fromWei(balance, 'Ether'))
+          map(balance =>  {
+            const newBalance = window.web3.utils.fromWei(balance, 'Ether');
+            this._stakedBalance$.next(+newBalance);
+            return newBalance;
+          })
         )
       })
     )
