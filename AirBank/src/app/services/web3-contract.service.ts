@@ -16,6 +16,7 @@ declare const window: any;
 export class Web3ContractService {
   accounts: string[] = [];
   accountId: string = '';
+  bankAccountId: string = '';
   usdcContract: any = null;
   abrtContract: any = null;
   airBankContract: any = null;
@@ -139,6 +140,7 @@ export class Web3ContractService {
         mergeMap((port: any) => {
           const abrtData = Abrt.networks[port];
           this.abrtContract = new web3.eth.Contract(Abrt.abi, abrtData.address);
+          this.bankAccountId = abrtData.address;
           return of(this.abrtContract) 
         })
       )
@@ -236,15 +238,23 @@ export class Web3ContractService {
     );
   }
 
-  public unstakeTokens() {
-    this.airBankContract.methods.unstakeTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
-      console.log('unstakeTokens transaction hash:' + hash);
-    })
+  public unstakeTokens(): Observable<unknown> {
+    return this.getAirBankContract().pipe(
+      mergeMap((airBank: any) => {
+        return from(this.airBankContract.methods.unstakeAllUsdcTokens().send({from: this.accountId}))
+      })
+    );
   }
 
-  public issueRewards() {
-    this.airBankContract.methods.issueTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
-      console.log('issueRewards transaction hash: ' + hash);
-    })
+  public issueRewards(): Observable<unknown> {
+    return this.getAirBankContract().pipe(
+      mergeMap((airBank: any) => {
+        //return from(this.airBankContract.methods.issueAbrtTokenRewards().send({from: this.accountId}))
+        return from(this.airBankContract.methods.issueAbrtTokenRewards().send())
+      })
+    )
+    // this.airBankContract.methods.issueTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
+    //   console.log('issueRewards transaction hash: ' + hash);
+    // })
   }
 }

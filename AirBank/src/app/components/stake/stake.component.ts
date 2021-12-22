@@ -42,11 +42,21 @@ export class StakeComponent implements OnInit {
     }
 
     this.web3ContractService.stakeTokens(this.stakeAmount).subscribe(result => {
-      this.snackBar.open(`Staked ${this.stakeAmount} mUSDC`, "SUCCESS", {
+      this.snackBar.open(`Staked ${this.stakeAmount} mUSDC`, 'SUCCESS', {
         duration: 3000
       });
       //this.load();
       this.stakeAmount = 0;
+      this.web3ContractService.loadBalances();
+    })
+  }
+
+  unstake() {
+    this.web3ContractService.unstakeTokens().subscribe(result => {
+      this.snackBar.open('Unstaked all mUSDC', 'SUCCESS', {
+        duration: 3000
+      });
+
       this.web3ContractService.loadBalances();
     })
   }
