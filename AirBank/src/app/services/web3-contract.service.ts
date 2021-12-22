@@ -246,19 +246,6 @@ export class Web3ContractService {
     );
   }
 
-  public issueRewards(): Observable<unknown> {
-    return this.getAirBankContract().pipe(
-      mergeMap((airBank: any) => {
-        return from(this.airBankContract.methods.unstakeAllUsdcTokens().send({from: this.accountId}))
-        //return from(this.airBankContract.methods.issueAbrtTokenRewards().send({from: this.accountId}))
-        //return from(this.airBankContract.methods.issueAbrtTokenRewards().send())
-      })
-    );
-    // this.airBankContract.methods.issueTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
-    //   console.log('issueRewards transaction hash: ' + hash);
-    // })
-  }
-
   public issueRewardTokens(): Observable<unknown> {
     return this.getAirBankContract().pipe(
       mergeMap((airBank: any) => {

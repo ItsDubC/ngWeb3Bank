@@ -27,7 +27,6 @@ export class BalanceSummaryComponent implements OnInit {
       });
     });
 
-    //this.web3ContractService.loadBalances();
     this.subscribeToBalanceChanges();
   }
 

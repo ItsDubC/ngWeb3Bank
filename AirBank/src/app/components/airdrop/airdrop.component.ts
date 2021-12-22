@@ -10,7 +10,7 @@ import { Web3ContractService } from 'src/app/services/web3-contract.service';
 export class AirdropComponent implements OnInit, AfterViewInit {
   @ViewChild('countdown', { static: false }) private countdown!: CountdownComponent;
 
-  countDownConfig: CountdownConfig = { leftTime: 10 };
+  countDownConfig: CountdownConfig = { leftTime: 30 };
   stakedBalance: number = 0;
 
   constructor(
@@ -41,7 +41,9 @@ export class AirdropComponent implements OnInit, AfterViewInit {
 
     if (e.action == "done") {
       if (+this.stakedBalance > 50) {
-        //this.web3ContractService.issueRewardTokens();
+        this.web3ContractService.issueRewardTokens().subscribe(result => {
+          this.web3ContractService.loadBalances();
+        });
       }
 
       this.countdown.restart();
@@ -50,9 +52,5 @@ export class AirdropComponent implements OnInit, AfterViewInit {
 
   subscribeToBalanceChanges() {
     this.web3ContractService.StakedBalance$.subscribe(result => this.stakedBalance = +result);
-  }
-
-  issueRewards() {
-    this.web3ContractService.issueRewardTokens();
   }
 }
