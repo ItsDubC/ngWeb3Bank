@@ -4,4 +4,5 @@
         Stake at least 50 mUSDC and get air dropped 5% of your staked mUSDC amount in ABRT reward tokens in:
     </mat-card-subtitle>
     <countdown #countdown [config]="countDownConfig" (event)="handleEvent($event)"></countdown>
+    <button matButton (click)="issueRewards()">Issue Rewards</button>
 </mat-card>

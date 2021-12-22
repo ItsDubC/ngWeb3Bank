@@ -19,6 +19,7 @@ export class AirdropComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.load();
+    this.subscribeToBalanceChanges();
   }
 
   ngAfterViewInit(): void {
@@ -36,11 +37,11 @@ export class AirdropComponent implements OnInit, AfterViewInit {
   }
 
   handleEvent(e: CountdownEvent) {
-    console.log(e);
+    console.log(e, this.stakedBalance);
 
     if (e.action == "done") {
       if (+this.stakedBalance > 50) {
-        this.web3ContractService.issueRewards();
+        //this.web3ContractService.issueRewardTokens();
       }
 
       this.countdown.restart();
@@ -48,6 +49,10 @@ export class AirdropComponent implements OnInit, AfterViewInit {
   }
 
   subscribeToBalanceChanges() {
-    this.web3ContractService.StakedBalance$.subscribe(result => this.stakedBalance = result);
+    this.web3ContractService.StakedBalance$.subscribe(result => this.stakedBalance = +result);
+  }
+
+  issueRewards() {
+    this.web3ContractService.issueRewardTokens();
   }
 }

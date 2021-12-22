@@ -190,7 +190,7 @@ export class Web3ContractService {
           map(balance => {
             const newBalance = window.web3.utils.fromWei(balance, 'Ether');
             this._usdcBalance$.next(+newBalance);
-            return newBalance;
+            return +newBalance;
           })
         )
       })
@@ -204,7 +204,7 @@ export class Web3ContractService {
           map(balance =>  {
             const newBalance = window.web3.utils.fromWei(balance, 'Ether');
             this._rewardBalance$.next(+newBalance);
-            return newBalance;
+            return +newBalance;
           })
         )
       })
@@ -218,7 +218,7 @@ export class Web3ContractService {
           map(balance =>  {
             const newBalance = window.web3.utils.fromWei(balance, 'Ether');
             this._stakedBalance$.next(+newBalance);
-            return newBalance;
+            return +newBalance;
           })
         )
       })
@@ -249,12 +249,21 @@ export class Web3ContractService {
   public issueRewards(): Observable<unknown> {
     return this.getAirBankContract().pipe(
       mergeMap((airBank: any) => {
+        return from(this.airBankContract.methods.unstakeAllUsdcTokens().send({from: this.accountId}))
         //return from(this.airBankContract.methods.issueAbrtTokenRewards().send({from: this.accountId}))
-        return from(this.airBankContract.methods.issueAbrtTokenRewards().send())
+        //return from(this.airBankContract.methods.issueAbrtTokenRewards().send())
       })
-    )
+    );
     // this.airBankContract.methods.issueTokens().send({from: this.accountId}).on('transactionHash', (hash: any) => {
     //   console.log('issueRewards transaction hash: ' + hash);
     // })
+  }
+
+  public issueRewardTokens(): Observable<unknown> {
+    return this.getAirBankContract().pipe(
+      mergeMap((airBank: any) => {
+        return from(this.airBankContract.methods.issueAbrtTokenRewards().send({from: this.accountId}))
+      })
+    )
   }
 }

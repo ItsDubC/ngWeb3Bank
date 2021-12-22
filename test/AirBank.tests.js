@@ -83,6 +83,11 @@ contract('AirBank', ([owner, customer]) => {
             // Issue ABRT reward tokens
             await airBank.issueAbrtTokenRewards({ from: owner });
 
+            // Check reward token balance
+            result = await abrt._balanceOf(customer);
+            assert.notEqual(result.toString(), '0', 'customer ABRT reward balance should not be 0');
+            console.log('ABRT balance: ' + result);
+
             // Ensure only owner can issue tokens
             await airBank.issueAbrtTokenRewards({ from: customer }).should.be.rejected;
 
@@ -105,8 +110,8 @@ contract('AirBank', ([owner, customer]) => {
             assert.equal(result, false, 'customer _isCurrentlyStaked status after unstaking');
 
             // USDC total supply
-            let totalSupply = await usdc._totalSupply();
-            console.log('totalSupply: ' + totalSupply);
+            result = await usdc._totalSupply();
+            console.log('USDC total supply: ' + result);
         });
     });
 
